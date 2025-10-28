@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🧭 Dienstplan Pro (GitHub Test)</title>
+  <title>🧭 Dienstplan Pro</title>
   <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
@@ -12,27 +12,20 @@
 </head>
 <body>
   <div id="root">Lädt…</div>
-
-  <!-- libs -->
   <script type="text/babel" data-presets="react" src="./lib/constants.js"></script>
   <script type="text/babel" data-presets="react" src="./lib/utils.js"></script>
   <script type="text/babel" data-presets="react" src="./lib/db.js"></script>
-
-  <!-- components -->
   <script type="text/babel" data-presets="react" src="./components/Header.jsx"></script>
   <script type="text/babel" data-presets="react" src="./components/ShiftBrush.jsx"></script>
   <script type="text/babel" data-presets="react" src="./components/PlanGrid.jsx"></script>
   <script type="text/babel" data-presets="react" src="./components/Modals.jsx"></script>
-
-  <!-- app -->
   <script type="text/babel" data-presets="react" src="./App.jsx"></script>
-
   <script type="text/babel" data-presets="react">
-    try{
-      ReactDOM.render(<App />, document.getElementById("root"));
-    }catch(e){
-      const pre=document.createElement('pre');
-      pre.textContent = "Startfehler: " + e.message + "\n" + (e.stack||"");
+    try {
+      ReactDOM.render(<App />, document.getElementById('root'));
+    } catch(e) {
+      const pre = document.createElement('pre');
+      pre.textContent = "Startfehler: " + e.message + "\n" + (e.stack || "");
       document.body.appendChild(pre);
     }
   </script>

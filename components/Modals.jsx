@@ -1,6 +1,3 @@
-
-
-
 window.Modals = ({ modal, setModal, ...props }) => {
     if (!modal.name) return null;
 
@@ -132,4 +129,4 @@ window.Modals = ({ modal, setModal, ...props }) => {
     return null;
 };
 
-try{ if (typeof Modals !== "undefined") window.Modals = Modals; }catch(e){}
+try{ if (typeof Modals !== "undefined") window.Modals = Modals; }catch(_e){}

@@ -1,4 +1,3 @@
-
 function Header({
   currentDate,
   onMonthChange,
@@ -76,4 +75,4 @@ function Header({
   );
 }
 
-try{ if (typeof Header !== "undefined") window.Header = Header; }catch(e){}
+try{ if (typeof Header !== "undefined") window.Header = Header; }catch(_e){}

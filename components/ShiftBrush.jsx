@@ -1,6 +1,4 @@
-
-
-import { getTextColor } from '../lib/utils.js'; // Wichtig für Textfarbe
+// Wichtig für Textfarbe
 
 // 'export const' ist korrekt
 window.ShiftBrush = ({ activeBrush, onBrushChange, shiftColors }) => {
@@ -66,4 +64,4 @@ window.ShiftBrush = ({ activeBrush, onBrushChange, shiftColors }) => {
         </div>
     );
 };
-try{ if (typeof ShiftBrush !== "undefined") window.ShiftBrush = ShiftBrush; }catch(e){}
+try{ if (typeof ShiftBrush !== "undefined") window.ShiftBrush = ShiftBrush; }catch(_e){}

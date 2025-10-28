@@ -459,4 +459,4 @@ thead th {
   }
 }
 
-try{ if (typeof index !== "undefined") window.index = index; }catch(e){}
+try{ if (typeof index !== "undefined") window.index = index; }catch(_e){}

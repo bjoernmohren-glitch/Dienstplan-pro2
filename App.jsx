@@ -1,11 +1,4 @@
 // /src/App.jsx
-
-
-
-
-
-
-
 /* ============================================================
    ===  UNDO / REDO – stabile Diff-Hilfsfunktionen  ===========
    ============================================================ */
@@ -1079,4 +1072,4 @@ const handleAutoPlan = () => {
   );
 }
 
-try{ if (typeof App !== "undefined") window.App = App; }catch(e){}
+try{ if (typeof App !== "undefined") window.App = App; }catch(_e){}
