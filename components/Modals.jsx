@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { SHIFT_TYPES } from '../lib/constants.js';
-import { calculateSollStunden } from '../lib/utils.js';
 
-export const Modals = ({ modal, setModal, ...props }) => {
+
+
+window.Modals = ({ modal, setModal, ...props }) => {
     if (!modal.name) return null;
 
     const EmployeeOverview = () => (
@@ -132,3 +131,5 @@ export const Modals = ({ modal, setModal, ...props }) => {
     if (modal.name === 'settings') return <Settings />;
     return null;
 };
+
+try{ if (typeof Modals !== "undefined") window.Modals = Modals; }catch(e){}

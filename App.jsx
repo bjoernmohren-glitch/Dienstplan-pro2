@@ -1,15 +1,9 @@
 // /src/App.jsx
-import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import "./index.css";
 
-import Header from "./components/Header.jsx";
-import { ShiftBrush } from "./components/ShiftBrush.jsx";
-import { PlanGrid } from "./components/PlanGrid.jsx";
-import { Modals } from "./components/Modals.jsx";
 
-import * as db from "./lib/db.js";
-import { DEFAULT_SETTINGS, SHIFT_TYPES } from "./lib/constants.js";
-import { getMonthId, isWorkday, calculateSollStunden } from "./lib/utils.js";
+
+
+
 
 
 /* ============================================================
@@ -148,7 +142,7 @@ const isF = (s) => !isWorkShift(s);
    ===  HAUPTKOMPONENTE ======================================
    ============================================================ */
 
-export default function App() {
+function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [employees, setEmployees] = useState([]);
   const [plan, setPlan] = useState({});
@@ -162,36 +156,123 @@ export default function App() {
   const isMouseDown = useRef(false);
   const fileInputRef = useRef(null);
   // === ONLINE-SYNC (PHP + MySQL) ===
-   // <-- anpassen!
-                            // <-- aus deiner config.php
+const API = "http://kellerkinderclan.de/Dienstplan/api";   // <-- anpassen!
+const KEY = "12345";                            // <-- aus deiner config.php
 
 
 // ============================================================
 // ===  Plan auf den Server hochladen (sicher, JSON-kompatibel)
 // ============================================================
-async function handleSyncUpload(team="default") {
-    const month=currentDate.getMonth()+1; const year=currentDate.getFullYear();
-    const payload={team,month,year,plan};
-    try {
-      const j = await apiFetch("save_plan.php", { method:"POST", body: JSON.stringify(payload) });
-      alert(j?.status==="ok" ? "Plan hochgeladen ✅" : "Fehler beim Upload ⚠️");
-    } catch(e){
-      console.error(e); alert("Fehler beim Upload ⚠️");
+async function handleSyncUpload(team = "default") {
+  console.log("handleSyncUpload gestartet ✅");
+  const month = currentDate.getMonth() + 1;
+  const year = currentDate.getFullYear();
+
+  try {
+    // Hilfsfunktion: zirkuläre oder nicht-serialisierbare Werte abfangen
+    const safeSerialize = (obj) => {
+      const seen = new WeakSet();
+      return JSON.parse(
+        JSON.stringify(obj, (key, value) => {
+          if (typeof value === "object" && value !== null) {
+            if (seen.has(value)) return undefined;
+            seen.add(value);
+          }
+          if (typeof value === "function") return undefined;
+          if (value instanceof HTMLElement) return undefined;
+          if (value instanceof Event) return undefined;
+          return value;
+        })
+      );
+    };
+
+    // Nur erlaubte Werte übernehmen
+    const cleanPlan = {};
+    for (const [key, value] of Object.entries(plan || {})) {
+      cleanPlan[key] = {
+        shift: value?.shift ?? "",
+        note: value?.note ?? "",
+        hours: Number(value?.hours) || 0,
+        locked: !!value?.locked,
+      };
     }
+
+    const payload = safeSerialize({
+      team,
+      monat: month,
+      jahr: year,
+      plan: cleanPlan,
+    });
+
+    const jsonBody = JSON.stringify(payload);
+    console.log("Upload payload size:", jsonBody.length, "bytes");
+
+    const res = await fetch(`${API}/save_plan.php?key=${KEY}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: jsonBody,
+    });
+
+    const text = await res.text();
+    console.log("Server-Raw:", text);
+
+    let json;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      alert("Serverantwort ungültig ⚠️");
+      console.warn("Antwort war kein gültiges JSON:", text);
+      return;
+    }
+
+    if (json?.status === "ok") {
+      alert("Plan wurde erfolgreich auf den Server hochgeladen ✅");
+    } else {
+      alert("Upload fehlgeschlagen ⚠️");
+      console.warn("Serverantwort:", json);
+    }
+  } catch (err) {
+    console.error("Upload-Fehler:", err);
+    alert("Fehler beim Hochladen – siehe Konsole ⚠️");
   }
 }
 // ============================================================
 // ===  Plan vom Server laden (JSON-kompatibel, PHP-Backend) ===
 // ============================================================
-async function handleSyncDownload(team="default"){
-    const month=currentDate.getMonth()+1; const year=currentDate.getFullYear();
+async function handleSyncDownload(team = "default") {
+  console.log("handleSyncDownload gestartet ✅");
+  const month = currentDate.getMonth() + 1;
+  const year = currentDate.getFullYear();
+
+  try {
+    // API-Call zum PHP-Backend
+    const res = await fetch(
+      `${API}/load_plan.php?key=${KEY}&team=${encodeURIComponent(team)}&monat=${month}&jahr=${year}`
+    );
+
+    const text = await res.text();
+    console.log("Server-Raw:", text);
+
+    let json;
     try {
-      const j = await apiFetch(`load_plan.php?team=${team}&month=${month}&year=${year}`);
-      if(j?.plan_json){ setPlan(j.plan_json); alert("Plan geladen ✅"); }
-      else alert("Kein Plan ⚠️");
-    } catch(e){
-      console.error(e); alert("Fehler beim Laden ⚠️");
+      json = JSON.parse(text);
+    } catch {
+      console.warn("Antwort ist kein gültiges JSON:", text);
+      alert("Serverantwort konnte nicht gelesen werden ⚠️");
+      return;
     }
+
+    if (json?.status === "ok" && json.plan) {
+      console.log("Plan erfolgreich geladen:", json);
+      setPlan(json.plan || {});
+      alert(`Plan für ${month}/${year} erfolgreich vom Server geladen ✅`);
+    } else {
+      alert("Kein gespeicherter Plan für diesen Monat gefunden ⚠️");
+      console.warn("Serverantwort:", json);
+    }
+  } catch (err) {
+    console.error("Download-Fehler:", err);
+    alert("Fehler beim Laden – siehe Konsole ⚠️");
   }
 }
 
@@ -997,3 +1078,5 @@ const handleAutoPlan = () => {
     </>
   );
 }
+
+try{ if (typeof App !== "undefined") window.App = App; }catch(e){}

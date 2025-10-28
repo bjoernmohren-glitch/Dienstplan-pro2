@@ -1,6 +1,5 @@
-import React from "react";
 
-export default function Header({
+function Header({
   currentDate,
   onMonthChange,
   onUndo,
@@ -76,3 +75,5 @@ export default function Header({
     </header>
   );
 }
+
+try{ if (typeof Header !== "undefined") window.Header = Header; }catch(e){}

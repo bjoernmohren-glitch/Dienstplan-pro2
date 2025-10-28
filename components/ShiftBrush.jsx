@@ -1,9 +1,9 @@
-import React from 'react';
-import { SHIFT_TYPES } from '../lib/constants.js';
+
+
 import { getTextColor } from '../lib/utils.js'; // Wichtig für Textfarbe
 
 // 'export const' ist korrekt
-export const ShiftBrush = ({ activeBrush, onBrushChange, shiftColors }) => {
+window.ShiftBrush = ({ activeBrush, onBrushChange, shiftColors }) => {
     
     const brushableShifts = Object.keys(SHIFT_TYPES).filter(
         key => SHIFT_TYPES[key].showInBrush
@@ -66,3 +66,4 @@ export const ShiftBrush = ({ activeBrush, onBrushChange, shiftColors }) => {
         </div>
     );
 };
+try{ if (typeof ShiftBrush !== "undefined") window.ShiftBrush = ShiftBrush; }catch(e){}
